@@ -1,0 +1,10 @@
+[package]
+name = "flaming_os"
+version = "0.1.0"
+authors = ["Madeleine Berner <mberne@kth.se>"]
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+rlibc = "1.0"

@@ -11,6 +11,10 @@ long_mode_start:
 	mov fs, ax
 	mov gs, ax
 
+	;;  call the rust main
+	extern rust_main
+	call rust_main
+	
 	;;  print `Hej Johan :) ` to screen
 	mov rax, 0x5f203f6a3f653f48
 	mov qword [0xb8000], rax
