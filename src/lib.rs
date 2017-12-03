@@ -10,14 +10,13 @@ extern crate volatile;
 extern crate multiboot2;
 #[macro_use]
 extern crate bitflags;
-
+extern crate x86_64;
 
 #[macro_use]
 mod vga_buffer;
 mod memory;
 
 use memory::FrameAllocator;
-
 
 #[no_mangle]
 pub extern fn rust_main(multiboot_information_address: usize) {
@@ -63,7 +62,19 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     let mut frame_allocator = memory::AreaFrameAllocator::new(
         kernel_start as usize, kernel_end as usize, multiboot_start,
         multiboot_end, memory_map_tag.memory_areas());
+/*
+    memory::test_paging(&mut frame_allocator);
 
+    let addr = 42 * 512 * 512 * 4096; // 42th P3 entry
+    let page = Page::containing_address(addr);
+    let frame = allocator.allocate_frame().expect("no more frames");
+    println!("None = {:?}, map to {:?}",
+             page_table.translate(addr),
+             frame);
+    page_table.map_to(page, frame, EntryFlags::empty(), allocator);
+    println!("Some = {:?}", page_table.translate(addr));
+    println!("next free frame: {:?}", allocator.allocate_frame());
+  */  
     println!("{:?}", frame_allocator.allocate_frame());
 
     for i in 0.. {
@@ -72,9 +83,19 @@ pub extern fn rust_main(multiboot_information_address: usize) {
             break;
         }
     }
+
     
     loop{}
 }
+
+/*
+fn test() {
+    let p4 = unsafe { &*P4 };
+    p4.next_table(42)
+        .and_then(|p3| p3.next_table(1337))
+        .and_then(|p2| p2.next_table(0xdeadbeaf))
+        .and_then(|p1| p1.next_table(0xcafebabe))
+}*/
 
 #[lang = "eh_personality"] extern fn eh_personality() {}
 #[lang = "panic_fmt"]
