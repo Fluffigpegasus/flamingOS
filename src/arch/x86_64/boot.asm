@@ -167,5 +167,5 @@ p2_table:
 	resb 4096
 	
 stack_bottom:
-	resb 64
+	resb 4096 * 4 		; 16kB or 4 pages
 stack_top:	
