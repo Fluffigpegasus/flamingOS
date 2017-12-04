@@ -28,7 +28,7 @@ mod memory;
 use memory::FrameAllocator;
 
 #[no_mangle]
-pub extern fn rust_main(multiboot_information_address: usize) {
+pub extern "C" fn rust_main(multiboot_information_address: usize) {
     // ATTENTION: we have a very small stack and no guard page (but now it is 16kB)
     
     vga_buffer::clear_screen();
@@ -39,19 +39,19 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     let boot_info = unsafe{ multiboot2::load(multiboot_information_address) };
     let memory_map_tag = boot_info.memory_map_tag().expect("Memory map tag required");
 
-    println!("memory areas:");
+   /* println!("memory areas:");
     for area in memory_map_tag.memory_areas() {
         println!("    start: 0x{:x}, lenght: 0x{:x}", area.base_addr, area.length);
-    }
+    }*/
 
     let elf_sections_tag = boot_info.elf_sections_tag()
         .expect("Elf-sections tag required");
 
-    println!("kernel sections:");
+    /*println!("kernel sections:");
     for section in elf_sections_tag.sections() {
         println!("    addr: 0x{:x}, size: 0x{:x}, flags: 0x{:x}",
                  section.addr, section.size, section.flags);
-    }
+    }*/
 
     let kernel_start = elf_sections_tag.sections().map(|s| s.addr)
         .min().unwrap();
@@ -65,8 +65,8 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     /* let multiboot_start = boot_info.start_address();
     let multiboot_end = boot_info.end_address(); */
     
-    println!("kernel_start: 0x{:x}, kernel_end: 0x{:x}", kernel_start, kernel_end);
-    println!("multiboot_start: 0x{:x}, multiboot_end: 0x{:x}", multiboot_start, multiboot_end);
+    /*println!("kernel_start: 0x{:x}, kernel_end: 0x{:x}", kernel_start, kernel_end);
+    println!("multiboot_start: 0x{:x}, multiboot_end: 0x{:x}", multiboot_start, multiboot_end);*/
 
     let mut frame_allocator = memory::AreaFrameAllocator::new(
         kernel_start as usize, kernel_end as usize, multiboot_start,
@@ -84,7 +84,7 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     println!("Some = {:?}", page_table.translate(addr));
     println!("next free frame: {:?}", allocator.allocate_frame());
   */  
-    println!("{:?}", frame_allocator.allocate_frame());
+    /*println!("{:?}", frame_allocator.allocate_frame());
 
     
    for i in 0.. {
@@ -92,7 +92,7 @@ pub extern fn rust_main(multiboot_information_address: usize) {
             println!("allocated {} frames", i);
             break;
         }
-    }
+    }*/
 
     
     // Remap the Kernel
@@ -100,10 +100,10 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     enable_write_protect_bit();
     memory::remap_the_kernel(&mut frame_allocator, boot_info);
     frame_allocator.allocate_frame(); // try to allocate a frame
-    println!("It did not crash!");
+    println!("It did not crash, Madde!");
 
     // set up guard page and map the heap pages
-    memory::init(boot_info);
+    /*memory::init(boot_info);
 
     unsafe {
         HEAP_ALLOCATOR.lock().init(HEAP_START, HEAP_START + HEAP_SIZE);
@@ -113,7 +113,7 @@ pub extern fn rust_main(multiboot_information_address: usize) {
         format!("Some String");
     }
 
-        println!("It did not crash!");
+        println!("It did not crash!");*/
     
     loop{}
 }
