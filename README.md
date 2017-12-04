@@ -15,10 +15,10 @@ Allocating Frames
 
 Page Tables
 
-## Todo:
 Remap the Kernel
 
-Kernel Heap
+## Todo:
+Kernel Heap - still some bug here
 
 ## Nice to have:
 Handling Exceptions
